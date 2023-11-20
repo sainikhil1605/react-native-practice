@@ -3,7 +3,7 @@ import { CATEGORIES } from "../data/dummy-data";
 
 const CategoriesScreen = ({ navigation }) => {
   const pressHandler = ({ item }) => {
-    console.log(item.id);
+    // console.log(item.id);
     navigation.navigate("MealsOverview", {
       categoryId: item.id,
     });
