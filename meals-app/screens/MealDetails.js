@@ -11,16 +11,19 @@ import { MEALS } from "../data/dummy-data";
 import MealInfo from "../components/MealInfo.js";
 import IconButton from "../components/IconButton.js";
 import { FavoritesContext } from "../store/context/favorites-context.js";
-
+import { useSelector, useDispatch } from "react-redux";
+import { addFavorite, removeFavorite } from "../store/redux/favorites.js";
 const MealDetails = ({
   route: {
     params: { mealId },
   },
   navigation,
 }) => {
-  const { ids, addFavorite, removeFavorite } = useContext(FavoritesContext);
+  // const { ids, addFavorite, removeFavorite } = useContext(FavoritesContext);
+  const { ids } = useSelector((state) => state.favorites);
   const meal = MEALS.find((meal) => meal.id === mealId);
   const mealIsFavorite = ids.indexOf(mealId) >= 0;
+  const dispatch = useDispatch();
   useLayoutEffect(() => {
     navigation.setOptions({
       title: meal.title,
@@ -36,9 +39,9 @@ const MealDetails = ({
   const headerBtnPressHandler = () => {
     // console.log("press");
     if (!mealIsFavorite) {
-      addFavorite(mealId);
+      dispatch(addFavorite(mealId));
     } else {
-      removeFavorite(mealId);
+      dispatch(removeFavorite(mealId));
     }
   };
   return (
