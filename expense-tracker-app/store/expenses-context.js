@@ -1,38 +1,8 @@
 import { createContext, useReducer } from "react";
-const DUMMY_EXPENSES = [
-  {
-    id: "e1",
-    description: "A Pair of Shoes",
-    amount: 59.99,
-    date: new Date("2023", "11", "24"),
-  },
-  {
-    id: "e2",
-    description: "Groceries",
-    amount: 100.99,
-    date: new Date("2023", "11", "25"),
-  },
-  {
-    id: "e3",
-    description: "A New Laptop",
-    amount: 259.99,
-    date: new Date("2023-10-20"),
-  },
-  {
-    id: "e4",
-    description: "A New Desk",
-    amount: 199.99,
-    date: new Date("2023-10-19"),
-  },
-  {
-    id: "e5",
-    description: "A New Book",
-    amount: 9.99,
-    date: new Date("2023-10-18"),
-  },
-];
+
 const ExpenseContext = createContext({
   expenses: [],
+  setExpenses: (expenses) => {},
   addExpense: ({ description, amount, date }) => {},
   deleteExpense: (id) => {},
   updateExpense: (id, description, amount, date) => {},
@@ -42,6 +12,9 @@ const expensesReducer = (state, action) => {
     case "ADD":
       const id = new Date().toString() + Math.random().toString();
       return [{ ...action.payload, id: id }, ...state];
+    case "SET":
+      const inverted = action.payload.reverse();
+      return inverted;
     case "UPDATE":
       const expenseIndex = state.findIndex((e) => e.id === action.payload.id);
       const updatedExpense = {
@@ -59,14 +32,17 @@ const expensesReducer = (state, action) => {
 };
 
 const ExpenseContextProvider = (props) => {
-  const [expenses, dispatch] = useReducer(expensesReducer, DUMMY_EXPENSES);
+  const [expenses, dispatch] = useReducer(expensesReducer, []);
   const addExpense = (expenseData) => {
     dispatch({ type: "ADD", payload: expenseData });
+  };
+  const setExpenses = (expenses) => {
+    dispatch({ type: "SET", payload: expenses });
   };
   const deleteExpense = (id) => {
     dispatch({ type: "DELETE", payload: id });
   };
-  const updateExpense = (id, description, amount, date) => {
+  const updateExpense = ({ id, description, amount, date }) => {
     dispatch({ type: "UPDATE", payload: { id, description, amount, date } });
   };
   return (
@@ -74,6 +50,7 @@ const ExpenseContextProvider = (props) => {
       value={{
         expenses: expenses,
         addExpense: addExpense,
+        setExpenses: setExpenses,
         deleteExpense: deleteExpense,
         updateExpense: updateExpense,
       }}
